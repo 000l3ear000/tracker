@@ -1,0 +1,40 @@
+
+.main{
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-evenly;
+    height: 400px;
+    width: 100%;
+    /* border: 1px solid; */
+    align-items: center; 
+}
+
+.main>div{
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    align-items: center;
+}
+
+.main>div>label{
+    width:25%;
+    font-weight: 600;
+}
+
+.main>div>input{
+    height: 40px;
+    width:50%
+}
+
+.btn{
+    background-color: blue !important;
+    color: white !important;
+    margin-top: 20px !important;
+}
+
+
+.selector{
+    width:50%;    
+    height: 40px;
+}
+
