@@ -6,6 +6,8 @@ import styles from "../../styles/CustomModal.module.css"
 function CustomModal({ name }) {
 
     const [open, setOpen] = useState(false);
+    const [toggle, setToggle] = useState(false);
+    const [state, setState] = useState([]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -16,18 +18,24 @@ function CustomModal({ name }) {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = localStorage.getItem('data');
-                if ( checkIfExist === null ) localStorage.setItem('data', JSON.stringify({
-                        [name]: [globalState],
-                }))
+                if ( checkIfExist === null ) {
+                        localStorage.setItem('data', JSON.stringify({
+                            [name]: [globalState],
+                    }))
+                    setState([globalState]);
+                }
                 else {
                     const getArray = JSON.parse(checkIfExist);
                     getArray[name].push(globalState);
                     localStorage.setItem('data', JSON.stringify({
                         ...getArray,
                     }));
+                    setState(getArray[name]);
                 }
-                console.log(localStorage.getItem('data'))
+                // console.log(localStorage.getItem('data'))
                 setGlobalState({});
+                handleClose();
+                setToggle(!toggle);
             } catch (error) {
                 console.log(error.message);
             }
@@ -46,7 +54,7 @@ function CustomModal({ name }) {
             }
         }
     }
-
+    
     const columns = [
         {
             name: 'Name',
@@ -71,11 +79,22 @@ function CustomModal({ name }) {
           },
     ];
     
-    const data = () => {
-        const parsed = JSON.parse(localStorage.getItem('data'));
-        return parsed[name];
-    }
+    useEffect(() => {
+        setState(data());
+    }, [])
 
+    // useEffect(() => {
+    //     console.log(state);
+    // }, [state])
+
+    const data = () => {
+        if (typeof window !== "undefined") {
+            localStorage.getItem('data');
+            const parsed = JSON.parse(localStorage.getItem('data'));
+            if ( parsed !== null ) return parsed[name];
+            return [];
+        }
+    }    
     const handleChange = value => {
         setSelectedRows(value);
     }
@@ -153,7 +172,10 @@ function CustomModal({ name }) {
                         <label >Description</label>
                         <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
                     </div>
-                    <Button className={styles.btn} onClick={() => addEntry()} >Create Company</Button>
+                    <div className={styles.btnDivs} >
+                        <Button className={styles.btn} onClick={() => addEntry()} >Create Company</Button>
+                        <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                    </div>
                 </div>
             </Box>
         )
@@ -299,16 +321,22 @@ function CustomModal({ name }) {
                     aria-describedby="modal-modal-description"
                 >
                     {switchCase()}
+
+                {/* <Button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleClose}>Close</Button> */}
                 </Modal>
             </div>
-
-            <DataTable
-                // title={name}
-                // theme="dark"
-                columns={columns}
-                data={data()}
-                // pagination
-            />
+            {
+                state.length > 0 && (
+                    <DataTable
+                        // title={name}
+                        // theme="dark"
+                        columns={columns}
+                        data={data()}
+                        // pagination
+                    />
+                )
+            }
+            { state.length === 0 && <DataTable columns={columns} data={[]} /> }
         </>
     )
 }

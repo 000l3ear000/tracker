@@ -26,10 +26,25 @@
     width:50%
 }
 
+.btnDivs {
+    display: flex;
+    justify-content: space-evenly !important;
+    width: 80% !important;
+    align-items: center;
+    /* border: 1px solid red !important; */
+}
+
 .btn{
     background-color: blue !important;
     color: white !important;
     margin-top: 20px !important;
+}
+
+.btnClose{
+    background-color: red !important;
+    color: white !important;
+    margin-top: 20px !important;
+    width: 30%;
 }
 
 
