@@ -45,13 +45,39 @@ function CustomModal({ name }) {
         }
     }
     
-    const updateEntry = ( value ) => {
+    const updateEntry = () => {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = localStorage.getItem('data');
                 if ( checkIfExist === null ) localStorage.setItem('data', {
                     name : JSON.stringify(value),
                 })
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+    }
+
+    const deleteEntry = (event) => {
+        if (typeof window !== "undefined") {
+            try {
+                const checkIfExist = JSON.parse(localStorage.getItem('data'));
+                if ( checkIfExist !== null ) {
+                    const getNewArray = checkIfExist[name].filter(obj => obj.id !== event.target.id)
+                    if ( getNewArray.length > 0 ) {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...checkIfExist,
+                            [name]: getNewArray,
+                        }));
+                        setState(getNewArray);
+                    } else {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...checkIfExist,
+                            [name]: [],
+                        }));
+                        setState([]);
+                    }
+                }
             } catch (error) {
                 console.log(error.message);
             }
@@ -106,7 +132,7 @@ function CustomModal({ name }) {
     };
     
     const deleteRow = event => {
-        console.log(event.target.id);
+        // setDeleteEntry(event.target.id);
     };
     
     const viewRow = event => {
