@@ -37,23 +37,25 @@ function CustomModal({ name, enteries }) {
         }
     }, [state])
     
-    useEffect(() => {
-        console.log(editState);
-    }, [editState])
+    // useEffect(() => {
+    //     console.log(editState);
+    // }, [editState])
 
     useEffect(() => {
-        autoFill();
+        if ( editToggle ) autoFill();
     }, [editToggle]);
 
     const autoFill = () => {
         const dataExist = JSON.parse(localStorage.getItem("data"));
-        const getObject = dataExist[name].filter(obj => obj.id === parseInt(eventTarget));
-        if ( getObject.length === 1 ) {
-            let editObj = {};
-            Object.keys(getObject[0]).forEach(key => {
-                editObj[key] = getObject[0][key];
-            })
-            setEditState(editObj);
+        if ( dataExist ) {
+            const getObject = dataExist[name].filter(obj => obj.id === parseInt(eventTarget));
+            if ( getObject.length === 1 ) {
+                let editObj = {};
+                Object.keys(getObject[0]).forEach(key => {
+                    editObj[key] = getObject[0][key];
+                })
+                setEditState(editObj);
+            }
         }
     }
 
