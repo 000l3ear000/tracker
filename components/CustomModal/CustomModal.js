@@ -24,17 +24,25 @@ function CustomModal({ name }) {
                 if ( checkIfExist === null ) {
                         localStorage.setItem('data', JSON.stringify({
                             [name]: [{ ...globalState, id: 0 }],
-                    }))
+                        }))
                     setState([{ ...globalState, id: 0 }]);
                 }
                 else {
                     const getArray = JSON.parse(checkIfExist);
                     const _id = getArray[name][getArray[name].length - 1];
-                    getArray[name].push({ ...globalState, id: _id.id + 1 });
-                    localStorage.setItem('data', JSON.stringify({
-                        ...getArray,
-                    }));
-                    setState(getArray[name]);
+                    if ( _id ) {
+                        getArray[name].push({ ...globalState, id: _id.id + 1 });
+                        localStorage.setItem('data', JSON.stringify({
+                            ...getArray,
+                        }));
+                        setState(getArray[name]);
+                    } else {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...getArray,
+                            [name]: [{ ...globalState, id: 0 }],
+                        }))
+                        setState([{ ...globalState, id: 0 }]);
+                    }
                 }
                 // console.log(localStorage.getItem('data'))
                 setGlobalState({});
@@ -58,12 +66,12 @@ function CustomModal({ name }) {
         }
     }
 
-    const deleteEntry = (event) => {
+    const deleteEntry = event => {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = JSON.parse(localStorage.getItem('data'));
                 if ( checkIfExist !== null ) {
-                    const getNewArray = checkIfExist[name].filter(obj => obj.id !== event.target.id)
+                    const getNewArray = checkIfExist[name].filter(obj => obj.id !== parseInt(event.target.id))
                     if ( getNewArray.length > 0 ) {
                         localStorage.setItem('data', JSON.stringify({
                             ...checkIfExist,
@@ -71,9 +79,10 @@ function CustomModal({ name }) {
                         }));
                         setState(getNewArray);
                     } else {
+                        delete checkIfExist[name]
                         localStorage.setItem('data', JSON.stringify({
                             ...checkIfExist,
-                            [name]: [],
+                            [name]: []
                         }));
                         setState([]);
                     }
@@ -103,13 +112,14 @@ function CustomModal({ name }) {
         {
             name: "Action",
             cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
-                <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
-                <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
-                <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
+                <button type="button" id={row.id} onClick={editRow} style={{ marginRight: '5px' }} className="btn btn-primary btn-sm">Edit</button>
+                <button type="button" id={row.id} onClick={viewRow} style={{ marginRight: '5px' }} className="btn btn-warning btn-sm">View</button>
+                <button type="button" id={row.id} onClick={deleteEntry} className="btn btn-danger btn-sm">Delete</button>
             </div>,
             ignoreRowClick: true,
             allowOverflow: true,
-            selector: false
+            selector: false,
+            center: true
         },
     ];
 
@@ -150,42 +160,6 @@ function CustomModal({ name }) {
         boxShadow: 24,
         p: 4,
     };
-
-    // useEffect(() => {
-    //     console.log(globalState);
-    // }, [globalState])
-    // const columns = useMemo(
-    //     () => [
-    //       {
-    //         name: 'Name',
-    //         selector: row => row.name,
-    //         sortable: true,
-    //         grow: 2,
-    //       },
-    //       {
-    //         name: 'Type',
-    //         selector: row => row.year,
-    //         sortable: true,
-    //       },
-    //       {
-    //         name: 'Color',
-    //         selector: row => row.color,
-    //         sortable: true,
-    //         right: true,
-    //       },
-    //       {
-    //         name:"Action",
-    //         cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
-    //         <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
-    //         <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
-    //         <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
-    //       </div>,
-    //         ignoreRowClick: true,
-    //         allowOverflow: true,
-    //         selector: false
-    //       },
-    //     ],[],
-    //     );
 
     const company = () => {
         return (
@@ -350,19 +324,18 @@ function CustomModal({ name }) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    {switchCase()}
+                    { switchCase() }
 
-                    {/* <Button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleClose}>Close</Button> */}
                 </Modal>
             </div>
             {
                 state ? state.length > 0 && (
                     <DataTable
-                        // title={name}
+                        title={name}
                         // theme="dark"
                         columns={columns}
                         data={data()}
-                    // pagination
+                        pagination
                     />
                 ) : null
             }
