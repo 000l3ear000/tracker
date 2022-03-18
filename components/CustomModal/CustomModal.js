@@ -1,5 +1,6 @@
 import { Modal, Button, Box } from '@material-ui/core'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useMemo } from 'react';
+import DataTable from 'react-data-table-component';
 import styles from "../../styles/CustomModal.module.css"
 
 function CustomModal({ name }) {
@@ -7,6 +8,60 @@ function CustomModal({ name }) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const columns = [
+        {
+            name: 'Title',
+            selector: row => row.title,
+            sortable: true,
+        },
+        {
+            name: 'Year',
+            selector: row => row.year,
+            sortable: true,
+        },
+                  {
+            name:"Action",
+            cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
+            <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
+            <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
+            <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
+          </div>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            selector: false
+          },
+    ];
+    
+    const data = [
+        {
+            id: 1,
+            title: 'Beetlejuice',
+            year: '1988',
+        },
+        {
+            id: 2,
+            title: 'Ghostbusters',
+            year: '1984',
+        },
+    ]
+
+    const handleChange = value => {
+        setSelectedRows(value);
+    }
+     
+    const editRow = event => {
+        console.log(event.target.id);
+    };
+    
+    const deleteRow = event => {
+        console.log(event.target.id);
+    };
+    
+    const viewRow = event => {
+        console.log(event.target.id);
+    }
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -18,6 +73,39 @@ function CustomModal({ name }) {
         boxShadow: 24,
         p: 4,
     };
+
+    // const columns = useMemo(
+    //     () => [
+    //       {
+    //         name: 'Name',
+    //         selector: row => row.name,
+    //         sortable: true,
+    //         grow: 2,
+    //       },
+    //       {
+    //         name: 'Type',
+    //         selector: row => row.year,
+    //         sortable: true,
+    //       },
+    //       {
+    //         name: 'Color',
+    //         selector: row => row.color,
+    //         sortable: true,
+    //         right: true,
+    //       },
+    //       {
+    //         name:"Action",
+    //         cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
+    //         <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
+    //         <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
+    //         <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
+    //       </div>,
+    //         ignoreRowClick: true,
+    //         allowOverflow: true,
+    //         selector: false
+    //       },
+    //     ],[],
+    //     );
 
     const company = () => {
         return (
@@ -165,9 +253,12 @@ function CustomModal({ name }) {
 
     return (
         <>
+            {/* <div className={ styles.headerDiv } >
+
+            </div> */}
             <Button style={{ backgroundColor: 'blue', color: 'white' }} onClick={handleOpen}>{"Create "+name}</Button>
 
-            <div >
+            <div>
                 <Modal
                     open={open}
                     onClose={handleClose}
@@ -178,8 +269,13 @@ function CustomModal({ name }) {
                 </Modal>
             </div>
 
-
-
+            <DataTable
+                // title={name}
+                // theme="dark"
+                columns={columns}
+                data={data}
+                // pagination
+            />
         </>
     )
 }
