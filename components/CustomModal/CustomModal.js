@@ -328,7 +328,7 @@ function CustomModal({ name }) {
                 </Modal>
             </div>
             {
-                state?state.length > 0 && (
+                state ? state.length > 0 && (
                     <DataTable
                         // title={name}
                         // theme="dark"
@@ -336,9 +336,9 @@ function CustomModal({ name }) {
                         data={data()}
                         // pagination
                     />
-                ):null
+                ) : null
             }
-            { state?state.length === 0 && <DataTable columns={columns} data={[]} />:null }
+            { state ? state.length === 0 && <DataTable columns={columns} data={[]} /> : null }
         </>
     )
 }
