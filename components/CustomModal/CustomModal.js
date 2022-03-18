@@ -87,23 +87,32 @@ function CustomModal({ name, enteries }) {
         }
     }
 
-    const returnColumns = () => {
-        const myArray = tableSwitch();
-        myArray.push({
-            name: "Action",
-            cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
-                <Button type="button" id={row.id} onClick={editRow} className="btn-primary">Edit</Button>
-                <Button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</Button>
-                <Button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</Button>
-            </div>,
-            ignoreRowClick: true,
-            allowOverflow: true,
-            selector: false
-        });
-        return myArray
+    const deleteEntry = (event) => {
+        if (typeof window !== "undefined") {
+            try {
+                const checkIfExist = JSON.parse(localStorage.getItem('data'));
+                if ( checkIfExist !== null ) {
+                    const getNewArray = checkIfExist[name].filter(obj => obj.id !== event.target.id)
+                    if ( getNewArray.length > 0 ) {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...checkIfExist,
+                            [name]: getNewArray,
+                        }));
+                        setState(getNewArray);
+                    } else {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...checkIfExist,
+                            [name]: [],
+                        }));
+                        setState([]);
+                    }
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
     }
-
-    // const columns = returnColumns();
+    
     const columns = [
         ...tableState,
         {
@@ -136,7 +145,7 @@ function CustomModal({ name, enteries }) {
     };
 
     const deleteRow = event => {
-        console.log(event.target.id);
+        // setDeleteEntry(event.target.id);
     };
 
     const viewRow = event => {
