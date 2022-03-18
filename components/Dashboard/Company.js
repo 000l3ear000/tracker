@@ -7,7 +7,7 @@ function Company() {
     return (
         <div className={styles.main}>
             <div className={styles.createBtn}>
-                <CustomModal name="Company" />
+                <CustomModal enteries={["Id","Name","Description"]} name="Company" />
             </div>
         </div>
     )

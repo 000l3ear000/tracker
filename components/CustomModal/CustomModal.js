@@ -1,9 +1,11 @@
 import { Modal, Button, Box } from '@material-ui/core'
+// import { TransitEnterexitSharp } from '@material-ui/icons';
 import React, { useState, useEffect, useMemo } from 'react';
 import DataTable from 'react-data-table-component';
 import styles from "../../styles/CustomModal.module.css"
+import { companyColumns, productionHallColumns, workplaceColumns, workplaceGroupColumns } from '../../helpers/columns';
 
-function CustomModal({ name }) {
+function CustomModal({ name, enteries }) {
 
     const [open, setOpen] = useState(false);
     const [state, setState] = useState([]);
@@ -12,18 +14,45 @@ function CustomModal({ name }) {
 
 
     const [globalState, setGlobalState] = useState({});
+    const [tableState, settableState] = useState([]);
+
 
     useEffect(() => {
         setState(data());
+        tableSwitch();
     }, [])
+    
+    useEffect(()=>{
+        if(tableState.length>0){
+            console.log(tableState)
+        }
+    },[tableState])
+
+    const tableSwitch=()=>{
+        switch(name){
+            case "Company":
+                settableState([...companyColumns]);
+                return
+            case "Production Hall":
+                settableState([...productionHallColumns]);
+                return
+            case "Workplace":
+                settableState([...workplaceColumns]);
+                return
+            case "Workplace Group":
+                settableState([...workplaceGroupColumns]);
+                return
+                
+        }
+    }
 
     const addEntry = () => {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = localStorage.getItem('data');
-                if ( checkIfExist === null ) {
-                        localStorage.setItem('data', JSON.stringify({
-                            [name]: [{ ...globalState, id: 0 }],
+                if (checkIfExist === null) {
+                    localStorage.setItem('data', JSON.stringify({
+                        [name]: [{ ...globalState, id: 0 }],
                     }))
                     setState([{ ...globalState, id: 0 }]);
                 }
@@ -58,36 +87,37 @@ function CustomModal({ name }) {
         }
     }
 
-    const columns = [
-        {
-            name: 'Id',
-            selector: row => row.id,
-            omit: true,
-        },
-        {
-            name: 'Name',
-            selector: row => row.name,
-            sortable: true,
-        },
-        {
-            name: 'Description',
-            selector: row => row.description,
-            // sortable: true,
-        },
-        {
+    const returnColumns = () => {
+        const myArray = tableSwitch();
+        myArray.push({
             name: "Action",
             cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
-                <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
-                <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
-                <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
+                <Button type="button" id={row.id} onClick={editRow} className="btn-primary">Edit</Button>
+                <Button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</Button>
+                <Button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</Button>
             </div>,
             ignoreRowClick: true,
             allowOverflow: true,
             selector: false
-        },
+        });
+        return myArray
+    }
+
+    // const columns = returnColumns();
+    const columns = [
+        ...tableState,
+        {
+            name: "Action",
+            cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
+                <Button type="button" id={row.id} onClick={editRow} className="btn-primary">Edit</Button>
+                <Button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</Button>
+                <Button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</Button>
+            </div>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            selector: false
+        }
     ];
-
-
 
     const data = () => {
         if (typeof window !== "undefined") {
