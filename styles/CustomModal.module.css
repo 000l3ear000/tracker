@@ -12,6 +12,7 @@
 .main>div{
     display: flex;
     justify-content: space-evenly;
+    /* flex-direction: column; */
     width: 100%;
     align-items: center;
 }
