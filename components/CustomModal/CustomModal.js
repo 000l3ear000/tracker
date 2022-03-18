@@ -13,6 +13,10 @@ function CustomModal({ name }) {
     
     const [globalState, setGlobalState] = useState({});
 
+    useEffect(() => {
+        setState(data());
+    }, [])
+
     const addEntry = () => {
         if (typeof window !== "undefined") {
             try {
@@ -83,13 +87,11 @@ function CustomModal({ name }) {
           },
     ];
     
-    useEffect(() => {
-        setState(data());
-    }, [])
+
 
     const data = () => {
         if (typeof window !== "undefined") {
-            localStorage.getItem('data');
+            // localStorage.getItem('data');
             const parsed = JSON.parse(localStorage.getItem('data'));
             if ( parsed !== null ) return parsed[name];
             return [];
@@ -326,7 +328,7 @@ function CustomModal({ name }) {
                 </Modal>
             </div>
             {
-                state.length > 0 && (
+                state?state.length > 0 && (
                     <DataTable
                         // title={name}
                         // theme="dark"
@@ -334,9 +336,9 @@ function CustomModal({ name }) {
                         data={data()}
                         // pagination
                     />
-                )
+                ):null
             }
-            { state.length === 0 && <DataTable columns={columns} data={[]} /> }
+            { state?state.length === 0 && <DataTable columns={columns} data={[]} />:null }
         </>
     )
 }
