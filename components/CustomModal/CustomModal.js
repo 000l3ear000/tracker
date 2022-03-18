@@ -6,7 +6,6 @@ import styles from "../../styles/CustomModal.module.css"
 function CustomModal({ name }) {
 
     const [open, setOpen] = useState(false);
-    const [toggle, setToggle] = useState(false);
     const [state, setState] = useState([]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -20,13 +19,14 @@ function CustomModal({ name }) {
                 const checkIfExist = localStorage.getItem('data');
                 if ( checkIfExist === null ) {
                         localStorage.setItem('data', JSON.stringify({
-                            [name]: [globalState],
+                            [name]: [{ ...globalState, id: 0 }],
                     }))
-                    setState([globalState]);
+                    setState([{ ...globalState, id: 0 }]);
                 }
                 else {
                     const getArray = JSON.parse(checkIfExist);
-                    getArray[name].push(globalState);
+                    const _id = getArray[name][getArray[name].length - 1];
+                    getArray[name].push({ ...globalState, id: _id.id + 1 });
                     localStorage.setItem('data', JSON.stringify({
                         ...getArray,
                     }));
@@ -35,7 +35,6 @@ function CustomModal({ name }) {
                 // console.log(localStorage.getItem('data'))
                 setGlobalState({});
                 handleClose();
-                setToggle(!toggle);
             } catch (error) {
                 console.log(error.message);
             }
@@ -56,6 +55,11 @@ function CustomModal({ name }) {
     }
     
     const columns = [
+        {
+            name: 'Id',
+            selector: row => row.id,
+            omit: true,
+        },
         {
             name: 'Name',
             selector: row => row.name,
