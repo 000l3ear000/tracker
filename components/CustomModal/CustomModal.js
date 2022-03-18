@@ -9,16 +9,54 @@ function CustomModal({ name }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    
+    const [globalState, setGlobalState] = useState({});
+
+    const addEntry = () => {
+        if (typeof window !== "undefined") {
+            try {
+                const checkIfExist = localStorage.getItem('data');
+                if ( checkIfExist === null ) localStorage.setItem('data', JSON.stringify({
+                        [name]: [globalState],
+                }))
+                else {
+                    const getArray = JSON.parse(checkIfExist);
+                    getArray[name].push(globalState);
+                    localStorage.setItem('data', JSON.stringify({
+                        ...getArray,
+                    }));
+                }
+                console.log(localStorage.getItem('data'))
+                setGlobalState({});
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+    }
+    
+    const updateEntry = ( value ) => {
+        if (typeof window !== "undefined") {
+            try {
+                const checkIfExist = localStorage.getItem('data');
+                if ( checkIfExist === null ) localStorage.setItem('data', {
+                    name : JSON.stringify(value),
+                })
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+    }
+
     const columns = [
         {
-            name: 'Title',
-            selector: row => row.title,
+            name: 'Name',
+            selector: row => row.name,
             sortable: true,
         },
         {
-            name: 'Year',
-            selector: row => row.year,
-            sortable: true,
+            name: 'Description',
+            selector: row => row.description,
+            // sortable: true,
         },
                   {
             name:"Action",
@@ -33,18 +71,10 @@ function CustomModal({ name }) {
           },
     ];
     
-    const data = [
-        {
-            id: 1,
-            title: 'Beetlejuice',
-            year: '1988',
-        },
-        {
-            id: 2,
-            title: 'Ghostbusters',
-            year: '1984',
-        },
-    ]
+    const data = () => {
+        const parsed = JSON.parse(localStorage.getItem('data'));
+        return parsed[name];
+    }
 
     const handleChange = value => {
         setSelectedRows(value);
@@ -74,6 +104,9 @@ function CustomModal({ name }) {
         p: 4,
     };
 
+    // useEffect(() => {
+    //     console.log(globalState);
+    // }, [globalState])
     // const columns = useMemo(
     //     () => [
     //       {
@@ -114,13 +147,13 @@ function CustomModal({ name }) {
                     <h2 >Create Company</h2>
                     <div>
                         <label >Name</label>
-                        <input placeholder={"Enter Name"} type="text" />
+                        <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
                     </div>
                     <div >
                         <label >Description</label>
-                        <input placeholder={"Enter Description"} type="text" />
+                        <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
                     </div>
-                    <Button className={styles.btn}>Create Company</Button>
+                    <Button className={styles.btn} onClick={() => addEntry()} >Create Company</Button>
                 </div>
             </Box>
         )
@@ -273,7 +306,7 @@ function CustomModal({ name }) {
                 // title={name}
                 // theme="dark"
                 columns={columns}
-                data={data}
+                data={data()}
                 // pagination
             />
         </>
