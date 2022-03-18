@@ -83,10 +83,6 @@ function CustomModal({ name }) {
         setState(data());
     }, [])
 
-    // useEffect(() => {
-    //     console.log(state);
-    // }, [state])
-
     const data = () => {
         if (typeof window !== "undefined") {
             localStorage.getItem('data');
