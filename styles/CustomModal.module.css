@@ -17,6 +17,20 @@
     align-items: center;
 }
 
+.modalContainer{
+    width: 100%;
+    display: flex;
+    /* border: 1px solid #000; */
+}
+
+.btnn{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    /* border: 1px solid #000; */
+}
+
+
 .main>div>label{
     width:25%;
     font-weight: 600;
@@ -58,5 +72,5 @@
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    border: 1px solid red;
+    border: 1px solid gray;
 }

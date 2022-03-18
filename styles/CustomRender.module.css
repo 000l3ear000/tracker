@@ -10,11 +10,15 @@
 .createBtn{
     display: flex;
     width:100%;
-    justify-content: flex-end;
+    flex-direction: column;
+    /* justify-content: flex-end; */
     padding-right: 20px;
     padding-top:20px;
     /* border: 1px solid #000; */
+    justify-content: flex-end;
 
 }
+
+
 
 

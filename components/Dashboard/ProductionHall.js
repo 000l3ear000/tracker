@@ -5,10 +5,10 @@ import CustomModal from '../CustomModal/CustomModal'
 function ProductionHall() {
   return (
     <div className={styles.main}>
-    <div className={styles.createBtn}>
-    <CustomModal name="Production Hall"/>
+      <div className={styles.createBtn}>
+        <CustomModal name="Production Hall" />
+      </div>
     </div>
-</div>
   )
 }
 

@@ -11,7 +11,7 @@ function CustomModal({ name }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    
+
     const [globalState, setGlobalState] = useState({});
 
     useEffect(() => {
@@ -22,9 +22,9 @@ function CustomModal({ name }) {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = localStorage.getItem('data');
-                if ( checkIfExist === null ) {
-                        localStorage.setItem('data', JSON.stringify({
-                            [name]: [globalState],
+                if (checkIfExist === null) {
+                    localStorage.setItem('data', JSON.stringify({
+                        [name]: [globalState],
                     }))
                     setState([globalState]);
                 }
@@ -45,20 +45,20 @@ function CustomModal({ name }) {
             }
         }
     }
-    
-    const updateEntry = ( value ) => {
+
+    const updateEntry = (value) => {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = localStorage.getItem('data');
-                if ( checkIfExist === null ) localStorage.setItem('data', {
-                    name : JSON.stringify(value),
+                if (checkIfExist === null) localStorage.setItem('data', {
+                    name: JSON.stringify(value),
                 })
             } catch (error) {
                 console.log(error.message);
             }
         }
     }
-    
+
     const columns = [
         {
             name: 'Name',
@@ -70,41 +70,41 @@ function CustomModal({ name }) {
             selector: row => row.description,
             // sortable: true,
         },
-                  {
-            name:"Action",
+        {
+            name: "Action",
             cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
-            <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
-            <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
-            <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
-          </div>,
+                <button type="button" id={row.id} onClick={editRow} className="btn btn-primary">Edit</button>
+                <button type="button" id={row.id} onClick={viewRow} className="btn btn-warning">View</button>
+                <button type="button" id={row.id} onClick={deleteRow} className="btn btn-danger">Delete</button>
+            </div>,
             ignoreRowClick: true,
             allowOverflow: true,
             selector: false
-          },
+        },
     ];
-    
+
 
 
     const data = () => {
         if (typeof window !== "undefined") {
             // localStorage.getItem('data');
             const parsed = JSON.parse(localStorage.getItem('data'));
-            if ( parsed !== null ) return parsed[name];
+            if (parsed !== null) return parsed[name];
             return [];
         }
-    }    
+    }
     const handleChange = value => {
         setSelectedRows(value);
     }
-     
+
     const editRow = event => {
         console.log(event.target.id);
     };
-    
+
     const deleteRow = event => {
         console.log(event.target.id);
     };
-    
+
     const viewRow = event => {
         console.log(event.target.id);
     }
@@ -216,8 +216,8 @@ function CustomModal({ name }) {
                         </select>
                     </div>
                     <div >
-                    <label >Name</label>
-                    <input placeholder={"Enter Name"} type="text" />
+                        <label >Name</label>
+                        <input placeholder={"Enter Name"} type="text" />
                     </div>
                     <div>
                         <label >Production Halls</label>
@@ -309,7 +309,9 @@ function CustomModal({ name }) {
             {/* <div className={ styles.headerDiv } >
 
             </div> */}
-            <Button style={{ backgroundColor: 'blue', color: 'white' }} onClick={handleOpen}>{"Create "+name}</Button>
+            <div className={styles.btnn}>
+                <Button className={styles.btn} onClick={handleOpen}>{"Create " + name}</Button>
+            </div>
 
             <div>
                 <Modal
@@ -320,21 +322,21 @@ function CustomModal({ name }) {
                 >
                     {switchCase()}
 
-                {/* <Button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleClose}>Close</Button> */}
+                    {/* <Button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleClose}>Close</Button> */}
                 </Modal>
             </div>
             {
-                state?state.length > 0 && (
+                state ? state.length > 0 && (
                     <DataTable
                         // title={name}
                         // theme="dark"
                         columns={columns}
                         data={data()}
-                        // pagination
+                    // pagination
                     />
-                ):null
+                ) : null
             }
-            { state?state.length === 0 && <DataTable columns={columns} data={[]} />:null }
+            {state ? state.length === 0 && <DataTable columns={columns} data={[]} /> : null}
         </>
     )
 }
