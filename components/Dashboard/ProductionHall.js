@@ -6,7 +6,7 @@ function ProductionHall() {
   return (
     <div className={styles.main}>
       <div className={styles.createBtn}>
-        <CustomModal name="Production Hall" />
+        <CustomModal enteries={["Id","Name","Companies"]} name="Production Hall" />
       </div>
     </div>
   )

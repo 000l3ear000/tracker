@@ -1,6 +1,6 @@
 .root{
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     height: 40px;
     padding: 5px;
     /* border: 1px solid #000; */
@@ -12,7 +12,7 @@
 }
 .root1{
     display: flex;
-    align-items: center;
+    /* align-items: center;     */
     height: 40px;
     padding: 5px;
     /* border: 1px solid #000; */
@@ -29,8 +29,6 @@
     cursor: pointer;
 }
 
-
-
 .root:hover{
     cursor: pointer;
 }
@@ -38,6 +36,7 @@
 .root>p{
     margin-left: 10px;
     font-weight: 600;
+    /* border: 1px solid #000; */
     
 }
 
