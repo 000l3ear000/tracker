@@ -54,7 +54,10 @@ function CustomModal({ name, enteries }) {
                 Object.keys(getObject[0]).forEach(key => {
                     editObj[key] = getObject[0][key];
                 })
-                setEditState(editObj);
+                if ( name === 'Workplace Group' ) {
+                    delete editObj['workplaces']
+                    setEditState(editObj);
+                } else setEditState(editObj);
             }
         }
     }
@@ -68,11 +71,11 @@ function CustomModal({ name, enteries }) {
     //     console.log(globalState);
     // }, [globalState])
 
-    useEffect(() => {
-        if (tableState.length > 0) {
-            console.log(tableState)
-        }
-    }, [tableState])
+    // useEffect(() => {
+    //     if (tableState.length > 0) {
+    //         console.log(tableState)
+    //     }
+    // }, [tableState])
 
     const tableSwitch = () => {
         switch (name) {
@@ -152,6 +155,8 @@ function CustomModal({ name, enteries }) {
                         ...dataExist,
                         [name]: getRemainingArray,
                     }))
+                    clearEditStates();
+                    setState(getRemainingArray);
                     handleClose();
                 }
             } catch (error) {
@@ -185,6 +190,14 @@ function CustomModal({ name, enteries }) {
                 console.log(error.message);
             }
         }
+    }
+
+    const clearEditStates = () => {
+        setselectState1("");
+        setState1('');
+        setState2('');
+        setState3('');
+        setEditToggle(false);
     }
 
     const columns = [
@@ -295,37 +308,60 @@ function CustomModal({ name, enteries }) {
     }
 
     const productionHall = () => {
-        const arrayExist = JSON.parse(localStorage.getItem('data'));
-        if (arrayExist !== null) {
-            try {
-                const getCompanyArray = arrayExist[name]
-            } catch (error) {
-
-            }
-        }
+        const companyIndex = state1['Company']?.findIndex(object => object.name === editState.company);
+        // console.log('COMPANY INDEX: ', companyIndex, state1['Company'], editState.company);
         return (
             <Box sx={style}>
                 <div className={styles.main}>
-                    <h2 >Create Production</h2>
-                    <div>
-                        <label >Companies</label>
-                        <select value={selectstate1} className={styles.selector} onChange={(company) => { setselectState1(company.target.value); setGlobalState({ ...globalState, company: company.target.value, companyId: company.key }) }} type="text" >
-                            <option value="">Select a Company</option>
-                            {
-                                state1['Company']?.map(object => (
-                                    <option value={object.name} key={object.id}>{object.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div >
-                        <label >Name</label>
-                        <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
-                    </div>
-                    <div className={styles.btnDivs} >
-                        <Button onClick={() => addEntry()} className={styles.btn}>Submit</Button>
-                        <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
-                    </div>
+                {
+                    editToggle ? (
+                        <>
+                            <h2 >Edit Production</h2>
+                            <div>
+                                <label >Companies</label>
+                                <select name="company" value={editState.company} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value={ companyIndex ? companyIndex : ''  }>Select a Company</option>
+                                    {
+                                        state1['Company']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div >
+                                <label >Name</label>
+                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button onClick={() => updateEntry()} className={styles.btn}>Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h2 >Create Production</h2>
+                            <div>
+                                <label >Companies</label>
+                                <select value={selectstate1} className={styles.selector} onChange={(company) => { setselectState1(company.target.value); setGlobalState({ ...globalState, company: company.target.value, companyId: company.key }) }} type="text" >
+                                    <option value="">Select a Company</option>
+                                    {
+                                        state1['Company']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div >
+                                <label >Name</label>
+                                <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button onClick={() => addEntry()} className={styles.btn}>Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    )
+                }
 
                 </div>
             </Box>
@@ -333,44 +369,90 @@ function CustomModal({ name, enteries }) {
     }
 
     const workplaces = () => {
+        const companyIndex = state1['Company']?.findIndex(object => object.name === editState.company);
+        const productionHallIndex = state1['Production Hall']?.findIndex(object => object.name === editState.production_hall);
         return (
             <Box sx={style}>
                 <div className={styles.main}>
-                    <h2 >Create Workplace</h2>
-                    <div>
-                        <label >Companies</label>
-                        <select value={selectstate1} className={styles.selector} onChange={(company) => { setselectState1(company.target.value); setGlobalState({ ...globalState, company: company.target.value, companyId: company.key }) }} type="text" >
-                            <option value="">Select a Company</option>
-                            {
-                                state1['Company']?.map(object => (
-                                    <option value={object.name} key={object.id}>{object.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div >
-                        <label >Name</label>
-                        <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
-                    </div>
-                    <div>
-                        <label >Production Halls</label>
-                        <select value={state2} className={styles.selector} onChange={(productionHall) => { setState2(productionHall.target.value); setGlobalState({ ...globalState, production_hall: productionHall.target.value }) }} type="text" >
-                            <option value="">Select a Production Hall</option>
-                            {
-                                state1['Production Hall']?.map(object => (
-                                    <option value={object.name} key={object.id}>{object.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div >
-                        <label >Rate Per Hour</label>
-                        <input placeholder={"Enter Rate"} value={globalState.rate_per_hour} type="text" onChange={(text) => setGlobalState({ ...globalState, rate_per_hour: text.target.value })} />
-                    </div>
-                    <div className={styles.btnDivs} >
-                        <Button className={styles.btn} onClick={() => addEntry()}>Submit</Button>
-                        <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
-                    </div>
+                {
+                    editToggle ? (
+                        <>
+                            <h2 >Edit Workplace</h2>
+                            <div>
+                                <label>Companies</label>
+                                <select name="company" value={editState.company} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value={ companyIndex ? companyIndex : ''  }>Select a Company</option>
+                                    {
+                                        state1['Company']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div >
+                                <label >Name</label>
+                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Production Halls</label>
+                                <select name="production_hall" value={editState.production_hall} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value={ productionHallIndex ? productionHallIndex : ''  }>Select a Production Hall</option>
+                                    {
+                                        state1['Production Hall']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div >
+                                <label >Rate Per Hour</label>
+                                <input name="rate_per_hour" placeholder={"Enter Rate"} value={editState.rate_per_hour} type="text" onChange={handleEditState} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => updateEntry()}>Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h2 >Create Workplace</h2>
+                            <div>
+                                <label >Companies</label>
+                                <select value={selectstate1} className={styles.selector} onChange={(company) => { setselectState1(company.target.value); setGlobalState({ ...globalState, company: company.target.value, companyId: company.key }) }} type="text" >
+                                    <option value="">Select a Company</option>
+                                    {
+                                        state1['Company']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div >
+                                <label >Name</label>
+                                <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
+                            <div>
+                                <label >Production Halls</label>
+                                <select value={state2} className={styles.selector} onChange={(productionHall) => { setState2(productionHall.target.value); setGlobalState({ ...globalState, production_hall: productionHall.target.value }) }} type="text" >
+                                    <option value="">Select a Production Hall</option>
+                                    {
+                                        state1['Production Hall']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div >
+                                <label >Rate Per Hour</label>
+                                <input placeholder={"Enter Rate"} value={globalState.rate_per_hour} type="text" onChange={(text) => setGlobalState({ ...globalState, rate_per_hour: text.target.value })} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => addEntry()}>Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    )
+                }
 
                 </div>
             </Box>
@@ -378,51 +460,104 @@ function CustomModal({ name, enteries }) {
     }
 
     const workplaceGroup = () => {
+        const companyIndex = state1['Company']?.findIndex(object => object.name === editState.company);
+        const productionHallIndex = state1['Production Hall']?.findIndex(object => object.name === editState.production_hall);
         return (
             <Box sx={style}>
                 <div className={styles.main}>
-                    <h2 >Create Workplace Group</h2>
-                    <div>
-                        <label >Name</label>
-                        <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
-                    </div>
-                    <div>
-                        <label >Companies</label>
-                        <select value={selectstate1} className={styles.selector} onChange={(company) => { setselectState1(company.target.value); setGlobalState({ ...globalState, company: company.target.value, companyId: company.key }) }} type="text" >
-                            <option value="">Select a Company</option>
-                            {
-                                state1['Company']?.map(object => (
-                                    <option value={object.name} key={object.id}>{object.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div>
-                        <label >Production Halls</label>
-                        <select value={state2} className={styles.selector} onChange={(productionHall) => { setState2(productionHall.target.value); setGlobalState({ ...globalState, production_hall: productionHall.target.value }) }} type="text" >
-                            <option value="">Select a Production Hall</option>
-                            {
-                                state1['Production Hall']?.map(object => (
-                                    <option value={object.name} key={object.id}>{object.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div>
-                        <label >Workplaces</label>
-                        <select value={state3} className={styles.selector} onChange={(workplace) => { setState3(workplace.target.value); setGlobalState({ ...globalState, workplaces: globalState['workplaces'] ? globalState['workplaces'] + ', ' + workplace.target.value : workplace.target.value }) }} type="text" >
-                            <option value="">Select a Workplace</option>
-                            {
-                                state1['Workplace']?.map(object => (
-                                    <option value={object.name} key={object.id}>{object.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div className={styles.btnDivs} >
-                        <Button className={styles.btn} onClick={() => addEntry()}>Submit</Button>
-                        <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
-                    </div>
+                {
+                    editToggle ? (
+                        <>
+                            <h2 >Edit Workplace Group</h2>
+                            <div>
+                                <label>Name</label>
+                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Companies</label>
+                                <select name="company" value={editState.company} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value={ companyIndex ? companyIndex : ''  }>Select a Company</option>
+                                    {
+                                        state1['Company']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label >Production Halls</label>
+                                <select name="production_hall" value={editState.production_hall} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value={ productionHallIndex ? productionHallIndex : ''  }>Select a Production Hall</option>
+                                    {
+                                        state1['Production Hall']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label >Workplaces</label>
+                                <select value={state3} className={styles.selector} onChange={(workplace) => { setState3(workplace.target.value); setEditState({ ...editState, workplaces: editState['workplaces'] ? editState['workplaces'] + ', ' + workplace.target.value : workplace.target.value }) }} type="text" >
+                                    <option value="">Select a Workplace</option>
+                                    {
+                                        state1['Workplace']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => updateEntry()}>Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h2 >Create Workplace Group</h2>
+                            <div>
+                                <label >Name</label>
+                                <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
+                            <div>
+                                <label >Companies</label>
+                                <select value={selectstate1} className={styles.selector} onChange={(company) => { setselectState1(company.target.value); setGlobalState({ ...globalState, company: company.target.value, companyId: company.key }) }} type="text" >
+                                    <option value="">Select a Company</option>
+                                    {
+                                        state1['Company']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label >Production Halls</label>
+                                <select value={state2} className={styles.selector} onChange={(productionHall) => { setState2(productionHall.target.value); setGlobalState({ ...globalState, production_hall: productionHall.target.value }) }} type="text" >
+                                    <option value="">Select a Production Hall</option>
+                                    {
+                                        state1['Production Hall']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label >Workplaces</label>
+                                <select value={state3} className={styles.selector} onChange={(workplace) => { setState3(workplace.target.value); setGlobalState({ ...globalState, workplaces: globalState['workplaces'] ? globalState['workplaces'] + ', ' + workplace.target.value : workplace.target.value }) }} type="text" >
+                                    <option value="">Select a Workplace</option>
+                                    {
+                                        state1['Workplace']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => addEntry()}>Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    )
+                }
 
                 </div>
             </Box>
@@ -489,7 +624,6 @@ function CustomModal({ name, enteries }) {
                     />
                 ) : null
             }
-            {console.log(state1)}
             {state ? state.length === 0 && <DataTable columns={columns} data={[]} /> : null}
         </>
     )
