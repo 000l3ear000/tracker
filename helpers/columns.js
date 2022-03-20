@@ -101,6 +101,11 @@ export const castingColumns = [
         sortable: true,
     },
     {
+        name: 'Type',
+        selector: row => row.selector,
+        omit: true,
+    },
+    {
         name: 'Description',
         selector: row => row.description,
     },
@@ -116,6 +121,11 @@ export const productColumns = [
         name: 'Name',
         selector: row => row.name,
         sortable: true,
+    },
+    {
+        name: 'Type',
+        selector: row => row.selector,
+        omit: true,
     },
     {
         name: 'Description',

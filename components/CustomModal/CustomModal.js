@@ -20,8 +20,19 @@ function CustomModal({ name }) {
     const [editState, setEditState] = useState({});
     const [eventTarget, setEventTarget] = useState();
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = (event, reason) => { 
+    const handleOpen = () => {
+        if (tableSelector) {
+            setTableSelector('');
+            setOpen(true);
+        }
+        setOpen(true);
+
+    };
+    const handleClose = (event, reason) => {
+        if (!tableSelector) {
+            setTableSelector('show_all');
+            setOpen(false);
+        }
         setOpen(false);
         // if ( reason === "backdropClick" ) {
         //     setEditToggle(false); 
@@ -39,7 +50,7 @@ function CustomModal({ name }) {
 
 
     useEffect(() => {
-        if ( name !== 'Products' ) { 
+        if (name !== 'Products') {
             setSelector('');
             setTableSelector('');
         }
@@ -82,8 +93,9 @@ function CustomModal({ name }) {
     }
 
     useEffect(() => {
+        // console.log('i was called');
         setState(() => data());
-        if ( selector && tableSelector ) productsTableSwitch();
+        if (selector && tableSelector !== '') productsTableSwitch();
         else tableSwitch();
     }, [tableSelector]);
 
@@ -110,10 +122,13 @@ function CustomModal({ name }) {
                 return
             case "Workplace Group":
                 settableState([...workplaceGroupColumns]);
+            case "Products":
+                settableState([...productColumns]);
                 return
         }
     }
     const productsTableSwitch = () => {
+        // console.log('i was called');
         switch (selector) {
             case "casting":
                 settableState([...castingColumns]);
@@ -176,10 +191,10 @@ function CustomModal({ name }) {
         if (typeof window !== "undefined") {
             try {
                 const checkIfExist = localStorage.getItem('data');
-                if (checkIfExist === null) {
+                if (checkIfExist === null || checkIfExist[name] === null) {
                     localStorage.setItem('data', JSON.stringify({
                         [name]: {
-                            [selector]: [{ ...globalState, id: 0 }],
+                            [selector]: [{ ...globalState, id: 0, selector: selector }],
                         },
                     }))
                     setState([{ ...globalState, id: 0 }]);
@@ -189,10 +204,11 @@ function CustomModal({ name }) {
                     // setState3('');
                 }
                 else {
+
                     const getArray = JSON.parse(checkIfExist);
-                    if (getArray[name][selector]?.length > 0) {
+                    if (getArray[name] && getArray[name][selector]?.length > 0) {
                         const _id = getArray[name][selector][getArray[name][selector].length - 1];
-                        getArray[name][selector].push({ ...globalState, id: _id.id + 1 });
+                        getArray[name][selector].push({ ...globalState, id: _id.id + 1, selector: selector });
                         localStorage.setItem('data', JSON.stringify({
                             ...getArray,
                         }));
@@ -206,7 +222,7 @@ function CustomModal({ name }) {
                             ...getArray,
                             [name]: {
                                 ...getArray[name],
-                                [selector]: [{ ...globalState, id: 0 }],
+                                [selector]: [{ ...globalState, id: 0, selector: selector }],
                             },
                         }))
                         setState([{ ...globalState, id: 0 }]);
@@ -224,6 +240,7 @@ function CustomModal({ name }) {
             }
         }
     }
+
 
     const updateEntry = () => {
         if (typeof window !== "undefined") {
@@ -274,6 +291,42 @@ function CustomModal({ name }) {
         }
     }
 
+
+    const deleteProductEntry = event => {
+        const type = event.target.value;
+        console.log(type);
+        if (typeof window !== "undefined") {
+            try {
+                const checkIfExist = JSON.parse(localStorage.getItem('data'));
+                if (checkIfExist !== null) {
+                    const getNewArray = checkIfExist[name][type].filter(obj => obj.id !== parseInt(event.target.id))
+                    if (getNewArray.length > 0) {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...checkIfExist,
+                            [name]: {
+                                ...checkIfExist[name],
+                                [type]: getNewArray,
+                            }
+                        }));
+                        setState(getNewArray);
+                    } else {
+                        // delete checkIfExist[name][type]
+                        localStorage.setItem('data', JSON.stringify({
+                            ...checkIfExist,
+                            [name]: {
+                                ...checkIfExist[name],
+                                [type]: []
+                            }
+                        }));
+                        setState([...checkIfExist[name][type], ...checkIfExist[name][type]]);
+                    }
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+    }
+
     const clearEditStates = () => {
         setselectState1("");
         setState1('');
@@ -288,7 +341,7 @@ function CustomModal({ name }) {
             name: "Action",
             cell: (row) => <div className="btn-group" role="group" aria-label="Basic example">
                 <button type="button" id={row.id} onClick={editRow} style={{ marginRight: '5px' }} className="btn btn-primary btn-sm">Edit</button>
-                <button type="button" id={row.id} onClick={deleteEntry} className="btn btn-danger btn-sm">Delete</button>
+                <button type="button" id={row.id} value={row.selector} onClick={selector ? deleteProductEntry : deleteEntry} className="btn btn-danger btn-sm">Delete</button>
             </div>,
             ignoreRowClick: true,
             allowOverflow: true,
@@ -301,9 +354,9 @@ function CustomModal({ name }) {
         if (typeof window !== "undefined") {
             const parsed = JSON.parse(localStorage.getItem('data'));
             // localStorage.getItem('data');
-            if ( !selector && parsed !== null && parsed[name] ) return parsed[name];
-            if ( selector && parsed !== null && parsed[name] && parsed[name][selector] ) {
-                if ( tableSelector === "show_all" ) {
+            if (!selector && parsed !== null && parsed[name]) return parsed[name];
+            if (selector && parsed !== null && parsed[name] && parsed[name][selector]) {
+                if (tableSelector === "show_all") {
                     const castings = parsed[name]['casting'] ? parsed[name]['casting'] : [];
                     const products = parsed[name]['product'] ? parsed[name]['product'] : [];
                     return [...castings, ...products];
@@ -773,12 +826,12 @@ function CustomModal({ name }) {
         return (
             <Box sx={style}>
                 <div className={styles.main}>
-                <label htmlFor="">Add {selector}</label>
-                <select name="selector" value={selector} className={styles.selector} onChange={(e) => setSelector(e.target.value)} type="text" >
-                    <option value="casting" selected >Casting</option>
-                    <option value="product">Product</option>
-                </select>
-                { switchMe() }
+                    <label htmlFor="">Add {selector}</label>
+                    <select name="selector" value={selector} className={styles.selector} onChange={(e) => setSelector(e.target.value)} type="text" >
+                        <option value="casting" selected >Casting</option>
+                        <option value="product">Product</option>
+                    </select>
+                    {switchMe()}
                 </div>
             </Box>
         )
@@ -793,11 +846,11 @@ function CustomModal({ name }) {
                             <h2>Edit Casting</h2>
                             <div>
                                 <label >Name</label>
-                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                                <input name="name" placeholder={"Enter Name"} value={editState['name'] ? editState['name'] : ''} type="text" onChange={handleEditState} />
                             </div>
                             <div >
                                 <label >Description</label>
-                                <input name="description" placeholder={"Enter Description"} value={ editState['description'] ? editState['description'] : '' } type="text" onChange={handleEditState} />
+                                <input name="description" placeholder={"Enter Description"} value={editState['description'] ? editState['description'] : ''} type="text" onChange={handleEditState} />
                             </div>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
@@ -805,7 +858,7 @@ function CustomModal({ name }) {
                             </div>
                         </>
                     ) : (
-                            
+
                         <>
                             <h2>Create Casting</h2>
                             <div>
@@ -828,6 +881,7 @@ function CustomModal({ name }) {
     }
 
     const product = () => {
+        const castingIndex = state1['Products']['casting']?.findIndex(object => object.name === editState.casting);
         return (
             <>
                 {
@@ -835,29 +889,72 @@ function CustomModal({ name }) {
                         <>
                             <h2>Edit Product</h2>
                             <div>
-                                <label >Name</label>
-                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                                <label>Name</label>
+                                <input name="name" placeholder={"Enter Name"} value={editState['name'] ? editState['name'] : ''} type="text" onChange={handleEditState} />
                             </div>
-                            <div >
-                                <label >Drawing Nr.</label>
-                                <input name="description" placeholder={"Enter Description"} value={ editState['description'] ? editState['description'] : '' } type="text" onChange={handleEditState} />
+                            <div>
+                                <label>Drawing No.</label>
+                                <input name="drawing_no" placeholder={"Enter Description"} value={editState['drawing_no'] ? editState['drawing_no'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Index</label>
+                                <input name="index" placeholder={"Enter Description"} value={editState['index'] ? editState['index'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Weight</label>
+                                <input name="weight" placeholder={"Enter Description"} value={editState['weight'] ? editState['weight'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Price</label>
+                                <input name="price" placeholder={"Enter Description"} value={editState['price'] ? editState['price'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Castings</label>
+                                <select name="casting" value={editState.casting} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value={castingIndex ? castingIndex : ''}>Select a casting</option>
+                                    {
+                                        state1['Products']['casting']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
                             </div>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
                             </div>
                         </>
-                    ) : (                            
+                    ) : (
                         <>
                             <h2>Create Product</h2>
+                            <div>
+                                <label>ID</label>
+                                <input placeholder={"Enter ID"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
+                            <div>
+                                <label>Drawing number</label>
+                                <input placeholder={"Enter Drawing number"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
                             <div>
                                 <label>Name</label>
                                 <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
                             </div>
                             <div >
-                                <label >Description</label>
-                                <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                                <label >Weight</label>
+                                <input placeholder={"Enter Weight"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
                             </div>
+                            <div >
+                                <label >Price</label>
+                                <input placeholder={"Enter Price"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                            </div>
+                            <select value={selectstate1} className={styles.selector} onChange={(casting) => { setselectState1(casting.target.value); setGlobalState({ ...globalState, casting: casting.target.value }) }} type="text" >
+                                <option value="">Select a casting</option>
+                                {
+                                    state1['Products']['casting']?.map(object => (
+                                        <option value={object.name} key={object.id}>{object.name}</option>
+                                    ))
+                                }
+                            </select>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
@@ -908,15 +1005,15 @@ function CustomModal({ name }) {
                 <Button className={styles.btn} onClick={handleOpen}>{"Create " + name}</Button>
             </div>
 
-            { selector && (
+            {selector && (
                 <>
                     <select name="table_selector" value={tableSelector} className={styles.selector} onChange={(e) => { setTableSelector(e.target.value); e.target.value === "show_all" ? '' : setSelector(e.target.value) }} type="text" >
-                        <option value="show_all" selected>Show All</option>
+                        <option value="show_all">Show All</option>
                         <option value="casting">Show Castings</option>
                         <option value="product">Show Products</option>
                     </select>
                 </>
-            ) }
+            )}
 
             <div>
                 <Modal
