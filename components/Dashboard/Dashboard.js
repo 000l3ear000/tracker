@@ -1,6 +1,8 @@
 import React from 'react'
 import Nav from '../Nav/Nav'
 import Company from './Company'
+import PlansSetting from './PlansSetting'
+import Products from './Products'
 import ProductionHall from './ProductionHall'
 import Workplace from './Workplace'
 import WorkplaceGroup from './WorkplaceGroup'
@@ -10,8 +12,8 @@ function Dashboard({ checked }) {
     const router = () => {
         switch (checked) {
             case "Company":
-                return(
-                    <Company/>
+                return (
+                    <Company />
                 )
             case "Workplace":
                 return (
@@ -25,6 +27,14 @@ function Dashboard({ checked }) {
             case "Workplace Group":
                 return (
                     <WorkplaceGroup />
+                )
+            case "Products":
+                return (
+                    <Products />
+                )
+            case "Plans Setting":
+                return (
+                    <PlansSetting />
                 )
             default:
                 return (
@@ -40,7 +50,7 @@ function Dashboard({ checked }) {
             {router()}
         </>
         // </div>
-            
+
     )
 
 }

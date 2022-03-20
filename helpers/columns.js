@@ -89,5 +89,33 @@ export const workplaceGroupColumns = [
     },
 ];
 
+export const plansSettingColumns = [
+    {
+        name: 'Id',
+        selector: row => row.id,
+        omit: true,
+    },
+    {
+        name: 'Company',
+        selector: row => row.company,
+        sortable: true,
+    },
+    {
+        name: 'Name',
+        selector: row => row.name,
+        sortable: true,
+    },
+    {
+        name: 'Production Hall',
+        selector: row => row.production_hall,
+        // sortable: true,
+    },
+    {
+        name: 'Workplace Groups',
+        selector: row => row.workplace_groups,
+        // sortable: true,
+    },
+];
+
 
 

@@ -1,16 +1,16 @@
 import React from 'react'
-// import CompanyModal from '../CustomModal/CompanyModal'
 import styles from "../../styles/CustomRender.module.css"
 import CustomModal from '../CustomModal/CustomModal'
 
-function Company() {
+
+function PlansSetting() {
     return (
         <div className={styles.main}>
             <div className={styles.createBtn}>
-                <CustomModal enteries={["Id","Name","Description"]} name="Company" />
+                <CustomModal name="Plans Setting" />
             </div>
         </div>
     )
 }
 
-export default Company
+export default PlansSetting
