@@ -1,9 +1,8 @@
 import { Modal, Button, Box } from '@material-ui/core'
-// import { TransitEnterexitSharp } from '@material-ui/icons';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import styles from "../../styles/CustomModal.module.css"
-import { companyColumns, productionHallColumns, workplaceColumns, workplaceGroupColumns, plansSettingColumns } from '../../helpers/columns';
+import { companyColumns, productionHallColumns, workplaceColumns, workplaceGroupColumns, castingColumns, productColumns } from '../../helpers/columns';
 
 function CustomModal({ name }) {
 
@@ -14,12 +13,24 @@ function CustomModal({ name }) {
     const [state3, setState3] = useState([]);
     const [selectstate1, setselectState1] = useState("");
 
+    const [selector, setSelector] = useState('casting');
+    const [tableSelector, setTableSelector] = useState('show_all');
+
     const [editToggle, setEditToggle] = useState(false);
     const [editState, setEditState] = useState({});
     const [eventTarget, setEventTarget] = useState();
 
     const handleOpen = () => setOpen(true);
-    const handleClose = () => { setOpen(false) };
+    const handleClose = (event, reason) => { 
+        setOpen(false);
+        // if ( reason === "backdropClick" ) {
+        //     setEditToggle(false); 
+        //     setEventTarget('');
+        // }
+        // if (typeof onClose === "function") {
+        //     onClose();
+        // }
+    };
 
 
 
@@ -28,6 +39,14 @@ function CustomModal({ name }) {
 
 
     useEffect(() => {
+        if ( name !== 'Products' ) { 
+            setSelector('');
+            setTableSelector('');
+        }
+    }, [name])
+
+    useEffect(() => {
+        // console.log(state, tableSelector);
         const dataExist = JSON.parse(localStorage.getItem("data"));
         if (dataExist) {
             setState1(dataExist);
@@ -64,8 +83,9 @@ function CustomModal({ name }) {
 
     useEffect(() => {
         setState(() => data());
-        tableSwitch();
-    }, [])
+        if ( selector && tableSelector ) productsTableSwitch();
+        else tableSwitch();
+    }, [tableSelector]);
 
     // useEffect(() => {
     //     console.log(globalState);
@@ -91,8 +111,15 @@ function CustomModal({ name }) {
             case "Workplace Group":
                 settableState([...workplaceGroupColumns]);
                 return
-            case "Plans Setting":
-                settableState([...plansSettingColumns]);
+        }
+    }
+    const productsTableSwitch = () => {
+        switch (selector) {
+            case "casting":
+                settableState([...castingColumns]);
+                return
+            case "product":
+                settableState([...productColumns]);
                 return
         }
     }
@@ -134,6 +161,59 @@ function CustomModal({ name }) {
                         setState1('');
                         setState2('');
                         setState3('');
+                    }
+                }
+                // console.log(localStorage.getItem('data'))
+                setGlobalState({});
+                handleClose();
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+    }
+
+    const addProductEntry = () => {
+        if (typeof window !== "undefined") {
+            try {
+                const checkIfExist = localStorage.getItem('data');
+                if (checkIfExist === null) {
+                    localStorage.setItem('data', JSON.stringify({
+                        [name]: {
+                            [selector]: [{ ...globalState, id: 0 }],
+                        },
+                    }))
+                    setState([{ ...globalState, id: 0 }]);
+                    // setselectState1("");
+                    // setState1('');
+                    // setState2('');
+                    // setState3('');
+                }
+                else {
+                    const getArray = JSON.parse(checkIfExist);
+                    if (getArray[name][selector]?.length > 0) {
+                        const _id = getArray[name][selector][getArray[name][selector].length - 1];
+                        getArray[name][selector].push({ ...globalState, id: _id.id + 1 });
+                        localStorage.setItem('data', JSON.stringify({
+                            ...getArray,
+                        }));
+                        setState(getArray[name][selector]);
+                        // setselectState1("");
+                        // setState1('');
+                        // setState2('');
+                        // setState3('');
+                    } else {
+                        localStorage.setItem('data', JSON.stringify({
+                            ...getArray,
+                            [name]: {
+                                ...getArray[name],
+                                [selector]: [{ ...globalState, id: 0 }],
+                            },
+                        }))
+                        setState([{ ...globalState, id: 0 }]);
+                        // setselectState1("");
+                        // setState1('');
+                        // setState2('');
+                        // setState3('');
                     }
                 }
                 // console.log(localStorage.getItem('data'))
@@ -219,9 +299,16 @@ function CustomModal({ name }) {
 
     const data = () => {
         if (typeof window !== "undefined") {
-            // localStorage.getItem('data');
             const parsed = JSON.parse(localStorage.getItem('data'));
-            if (parsed !== null && parsed[name]) return parsed[name];
+            // localStorage.getItem('data');
+            if ( !selector && parsed !== null && parsed[name] ) return parsed[name];
+            if ( selector && parsed !== null && parsed[name] && parsed[name][selector] ) {
+                if ( tableSelector === "show_all" ) {
+                    const castings = parsed[name]['casting'] ? parsed[name]['casting'] : [];
+                    const products = parsed[name]['product'] ? parsed[name]['product'] : [];
+                    return [...castings, ...products];
+                } else return parsed[name][selector]
+            };
             return [];
         }
     }
@@ -671,7 +758,116 @@ function CustomModal({ name }) {
         )
     }
 
+    const products = () => {
+        const switchMe = () => {
+            switch (selector) {
+                case 'casting':
+                    return casting();
+                case 'product':
+                    return product();
 
+                default:
+                    break;
+            }
+        }
+        return (
+            <Box sx={style}>
+                <div className={styles.main}>
+                <label htmlFor="">Add {selector}</label>
+                <select name="selector" value={selector} className={styles.selector} onChange={(e) => setSelector(e.target.value)} type="text" >
+                    <option value="casting" selected >Casting</option>
+                    <option value="product">Product</option>
+                </select>
+                { switchMe() }
+                </div>
+            </Box>
+        )
+    }
+
+    const casting = () => {
+        return (
+            <>
+                {
+                    editToggle ? (
+                        <>
+                            <h2>Edit Casting</h2>
+                            <div>
+                                <label >Name</label>
+                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div >
+                                <label >Description</label>
+                                <input name="description" placeholder={"Enter Description"} value={ editState['description'] ? editState['description'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
+                                <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
+                            </div>
+                        </>
+                    ) : (
+                            
+                        <>
+                            <h2>Create Casting</h2>
+                            <div>
+                                <label >Name</label>
+                                <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
+                            <div >
+                                <label >Description</label>
+                                <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    )
+                }
+            </>
+        )
+    }
+
+    const product = () => {
+        return (
+            <>
+                {
+                    editToggle ? (
+                        <>
+                            <h2>Edit Product</h2>
+                            <div>
+                                <label >Name</label>
+                                <input name="name" placeholder={"Enter Name"} value={ editState['name'] ? editState['name'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div >
+                                <label >Drawing Nr.</label>
+                                <input name="description" placeholder={"Enter Description"} value={ editState['description'] ? editState['description'] : '' } type="text" onChange={handleEditState} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
+                                <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
+                            </div>
+                        </>
+                    ) : (                            
+                        <>
+                            <h2>Create Product</h2>
+                            <div>
+                                <label>Name</label>
+                                <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                            </div>
+                            <div >
+                                <label >Description</label>
+                                <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                            </div>
+                            <div className={styles.btnDivs} >
+                                <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
+                                <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
+                            </div>
+                        </>
+                    )
+                }
+            </>
+        )
+    }
 
 
     const switchCase = () => {
@@ -692,9 +888,9 @@ function CustomModal({ name }) {
                 return (
                     workplaceGroup()
                 )
-            case 'Plans Setting':
+            case 'Products':
                 return (
-                    plansSetting()
+                    products()
                 )
             default:
                 return (
@@ -711,6 +907,16 @@ function CustomModal({ name }) {
             <div className={styles.btnn}>
                 <Button className={styles.btn} onClick={handleOpen}>{"Create " + name}</Button>
             </div>
+
+            { selector && (
+                <>
+                    <select name="table_selector" value={tableSelector} className={styles.selector} onChange={(e) => { setTableSelector(e.target.value); e.target.value === "show_all" ? '' : setSelector(e.target.value) }} type="text" >
+                        <option value="show_all" selected>Show All</option>
+                        <option value="casting">Show Castings</option>
+                        <option value="product">Show Products</option>
+                    </select>
+                </>
+            ) }
 
             <div>
                 <Modal

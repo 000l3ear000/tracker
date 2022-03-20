@@ -89,16 +89,11 @@ export const workplaceGroupColumns = [
     },
 ];
 
-export const plansSettingColumns = [
+export const castingColumns = [
     {
         name: 'Id',
         selector: row => row.id,
         omit: true,
-    },
-    {
-        name: 'Company',
-        selector: row => row.company,
-        sortable: true,
     },
     {
         name: 'Name',
@@ -106,16 +101,24 @@ export const plansSettingColumns = [
         sortable: true,
     },
     {
-        name: 'Production Hall',
-        selector: row => row.production_hall,
-        // sortable: true,
-    },
-    {
-        name: 'Workplace Groups',
-        selector: row => row.workplace_groups,
-        // sortable: true,
+        name: 'Description',
+        selector: row => row.description,
     },
 ];
 
-
-
+export const productColumns = [
+    {
+        name: 'Id',
+        selector: row => row.id,
+        omit: true,
+    },
+    {
+        name: 'Name',
+        selector: row => row.name,
+        sortable: true,
+    },
+    {
+        name: 'Description',
+        selector: row => row.description,
+    },
+];
