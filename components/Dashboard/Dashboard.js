@@ -1,10 +1,9 @@
 import React from 'react'
-import Nav from '../Nav/Nav'
 import Company from './Company'
 import ProductionHall from './ProductionHall'
 import Workplace from './Workplace'
 import WorkplaceGroup from './WorkplaceGroup'
-// import styles from '../../styles/Dashboard/Dashboard.module.css'
+import Products from './Products';
 
 function Dashboard({ checked }) {
     const router = () => {
@@ -25,6 +24,10 @@ function Dashboard({ checked }) {
             case "Workplace Group":
                 return (
                     <WorkplaceGroup />
+                )
+            case "Products":
+                return (
+                    <Products />
                 )
             default:
                 return (

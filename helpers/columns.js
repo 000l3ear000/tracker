@@ -89,5 +89,36 @@ export const workplaceGroupColumns = [
     },
 ];
 
+export const castingColumns = [
+    {
+        name: 'Id',
+        selector: row => row.id,
+        omit: true,
+    },
+    {
+        name: 'Name',
+        selector: row => row.name,
+        sortable: true,
+    },
+    {
+        name: 'Description',
+        selector: row => row.description,
+    },
+];
 
-
+export const productColumns = [
+    {
+        name: 'Id',
+        selector: row => row.id,
+        omit: true,
+    },
+    {
+        name: 'Name',
+        selector: row => row.name,
+        sortable: true,
+    },
+    {
+        name: 'Description',
+        selector: row => row.description,
+    },
+];
