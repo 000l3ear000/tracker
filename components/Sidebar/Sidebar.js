@@ -16,6 +16,8 @@ function Sidebar({checked,setChecked}) {
         <CustomLeftIcons setPage={setPage} setChecked={setChecked} checked={checked} text="Workplace" icon={<AssignmentIcon />} />
         <CustomLeftIcons setPage={setPage} setChecked={setChecked} checked={checked} text="Workplace Group" icon={<AssignmentIcon />} />
         <CustomLeftIcons setPage={setPage} setChecked={setChecked} checked={checked} text="Products" icon={<AssignmentIcon />} />
+        <CustomLeftIcons setPage={setPage} setChecked={setChecked} checked={checked} text="Operation" icon={<AssignmentIcon />} />
+        <CustomLeftIcons setPage={setPage} setChecked={setChecked} checked={checked} text="Plans Setting" icon={<AssignmentIcon />} />
 
         {/* <CustomLeftIcons setPage={setPage} setChecked={setChecked} checked={checked} text="ORDERS" icon={<AssignmentIcon />} /> */}
 

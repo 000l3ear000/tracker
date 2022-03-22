@@ -15,6 +15,9 @@ function CustomModal({ name }) {
 
     const [selector, setSelector] = useState('casting');
     const [tableSelector, setTableSelector] = useState('show_all');
+    const [modalSelector, setModalSelector] = useState("product")
+
+    // const [ID,setID]=useState("")
 
     const [editToggle, setEditToggle] = useState(false);
     const [editState, setEditState] = useState({});
@@ -66,6 +69,10 @@ function CustomModal({ name }) {
             setState1([])
         }
     }, [state])
+
+    // useEffect(() => {
+    //     console.log("STATEEEEEEEE>>>>>>", state1.Products)
+    // }, [state1])
 
     // useEffect(() => {
     //     console.log(editState);
@@ -131,7 +138,7 @@ function CustomModal({ name }) {
         // console.log('i was called');
         switch (selector) {
             case "casting":
-                settableState([...castingColumns]);
+                settableState([...productColumns]);
                 return
             case "product":
                 settableState([...productColumns]);
@@ -194,7 +201,7 @@ function CustomModal({ name }) {
                 if (checkIfExist === null || checkIfExist[name] === null) {
                     localStorage.setItem('data', JSON.stringify({
                         [name]: {
-                            [selector]: [{ ...globalState, id: 0, selector: selector }],
+                            [modalSelector]: [{ ...globalState, id: 0, selector: modalSelector }],
                         },
                     }))
                     setState([{ ...globalState, id: 0 }]);
@@ -206,13 +213,13 @@ function CustomModal({ name }) {
                 else {
 
                     const getArray = JSON.parse(checkIfExist);
-                    if (getArray[name] && getArray[name][selector]?.length > 0) {
-                        const _id = getArray[name][selector][getArray[name][selector].length - 1];
-                        getArray[name][selector].push({ ...globalState, id: _id.id + 1, selector: selector });
+                    if (getArray[name] && getArray[name][modalSelector]?.length > 0) {
+                        const _id = getArray[name][modalSelector][getArray[name][modalSelector].length - 1];
+                        getArray[name][modalSelector].push({ ...globalState, id: _id.id + 1, selector: modalSelector });
                         localStorage.setItem('data', JSON.stringify({
                             ...getArray,
                         }));
-                        setState(getArray[name][selector]);
+                        setState(getArray[name][modalSelector]);
                         // setselectState1("");
                         // setState1('');
                         // setState2('');
@@ -222,7 +229,7 @@ function CustomModal({ name }) {
                             ...getArray,
                             [name]: {
                                 ...getArray[name],
-                                [selector]: [{ ...globalState, id: 0, selector: selector }],
+                                [modalSelector]: [{ ...globalState, id: 0, selector: modalSelector }],
                             },
                         }))
                         setState([{ ...globalState, id: 0 }]);
@@ -813,7 +820,7 @@ function CustomModal({ name }) {
 
     const products = () => {
         const switchMe = () => {
-            switch (selector) {
+            switch (modalSelector) {
                 case 'casting':
                     return casting();
                 case 'product':
@@ -826,14 +833,16 @@ function CustomModal({ name }) {
         return (
             <Box sx={style}>
                 <div className={styles.main}>
-                    <label htmlFor="">Add {selector}</label>
-                    <select name="selector" value={selector} className={styles.selector} onChange={(e) => setSelector(e.target.value)} type="text" >
-                        <option value="casting" selected >Casting</option>
-                        <option value="product">Product</option>
-                    </select>
+                    <div style={{ display: 'flex', margin: '5px', justifyContent: 'flex-end', paddingRight: '-20px' }}>
+                        <label htmlFor=""> Select To Create</label>
+                        <select name="selector" value={modalSelector} className={styles.selector} onChange={(e) => setModalSelector(e.target.value)} type="text" >
+                            <option value="casting" >Casting</option>
+                            <option value="product">Product</option>
+                        </select>
+                    </div>
                     {switchMe()}
                 </div>
-            </Box>
+            </Box >
         )
     }
 
@@ -845,30 +854,55 @@ function CustomModal({ name }) {
                         <>
                             <h2>Edit Casting</h2>
                             <div>
-                                <label >Name</label>
+                                <label>Name</label>
                                 <input name="name" placeholder={"Enter Name"} value={editState['name'] ? editState['name'] : ''} type="text" onChange={handleEditState} />
                             </div>
-                            <div >
-                                <label >Description</label>
-                                <input name="description" placeholder={"Enter Description"} value={editState['description'] ? editState['description'] : ''} type="text" onChange={handleEditState} />
+                            <div>
+                                <label>Drawing No.</label>
+                                <input name="drawing_no" placeholder={"Enter Description"} value={editState['drawing_no'] ? editState['drawing_no'] : ''} type="text" onChange={handleEditState} />
                             </div>
+                            <div>
+                                <label>Index</label>
+                                <input name="index" placeholder={"Enter Description"} value={editState['index'] ? editState['index'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Weight</label>
+                                <input name="weight" placeholder={"Enter Description"} value={editState['weight'] ? editState['weight'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+                            <div>
+                                <label>Price</label>
+                                <input name="price" placeholder={"Enter Description"} value={editState['price'] ? editState['price'] : ''} type="text" onChange={handleEditState} />
+                            </div>
+
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
                             </div>
                         </>
                     ) : (
-
                         <>
                             <h2>Create Casting</h2>
                             <div>
-                                <label >Name</label>
+                                <label>ID</label>
+                                <input placeholder={"Enter ID"} value={globalState.ID} type="text" onChange={(text) => setGlobalState({ ...globalState, ID: text.target.value })} />
+                            </div>
+                            <div>
+                                <label>Drawing number</label>
+                                <input placeholder={"Enter Drawing number"} value={globalState.drawing_no} type="text" onChange={(text) => setGlobalState({ ...globalState, drawing_no: text.target.value })} />
+                            </div>
+                            <div>
+                                <label>Name</label>
                                 <input placeholder={"Enter Name"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
                             </div>
                             <div >
-                                <label >Description</label>
-                                <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                                <label >Weight</label>
+                                <input placeholder={"Enter Weight"} value={globalState.weight} type="text" onChange={(text) => setGlobalState({ ...globalState, weight: text.target.value })} />
                             </div>
+                            <div >
+                                <label >Price</label>
+                                <input placeholder={"Enter Price"} value={globalState.price} type="text" onChange={(text) => setGlobalState({ ...globalState, price: text.target.value })} />
+                            </div>
+
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
@@ -881,7 +915,7 @@ function CustomModal({ name }) {
     }
 
     const product = () => {
-        const castingIndex = state1['Products']['casting']?.findIndex(object => object.name === editState.casting);
+        const castingIndex = state1.length > 0 ? state1['Products']['casting']?.findIndex(object => object.name === editState.casting) : [];
         return (
             <>
                 {
@@ -908,17 +942,21 @@ function CustomModal({ name }) {
                                 <label>Price</label>
                                 <input name="price" placeholder={"Enter Description"} value={editState['price'] ? editState['price'] : ''} type="text" onChange={handleEditState} />
                             </div>
-                            <div>
-                                <label>Castings</label>
-                                <select name="casting" value={editState.casting} className={styles.selector} onChange={handleEditState} type="text" >
-                                    <option value={castingIndex ? castingIndex : ''}>Select a casting</option>
-                                    {
-                                        state1['Products']['casting']?.map(object => (
-                                            <option value={object.name} key={object.id}>{object.name}</option>
-                                        ))
-                                    }
-                                </select>
-                            </div>
+                            {
+
+                                state1.Products?.casting? (
+                                    <div>
+                                        <label>Castings</label>
+                                        <select name="casting" value={editState.casting} className={styles.selector} onChange={handleEditState} type="text" >
+                                            <option value={castingIndex ? castingIndex : ''}>Select a casting</option>
+                                            {
+                                                state1['Products']['casting']?.map(object => (
+                                                    <option value={object.name} key={object.id}>{object.name}</option>
+                                                ))
+                                            }
+                                        </select>
+                                    </div>) : null
+                            }
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
@@ -929,11 +967,11 @@ function CustomModal({ name }) {
                             <h2>Create Product</h2>
                             <div>
                                 <label>ID</label>
-                                <input placeholder={"Enter ID"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                                <input placeholder={"Enter ID"} value={globalState.ID} type="text" onChange={(text) => setGlobalState({ ...globalState, ID: text.target.value })} />
                             </div>
                             <div>
                                 <label>Drawing number</label>
-                                <input placeholder={"Enter Drawing number"} value={globalState.name} type="text" onChange={(text) => setGlobalState({ ...globalState, name: text.target.value })} />
+                                <input placeholder={"Enter Drawing number"} value={globalState.drawing_no} type="text" onChange={(text) => setGlobalState({ ...globalState, drawing_no: text.target.value })} />
                             </div>
                             <div>
                                 <label>Name</label>
@@ -941,20 +979,29 @@ function CustomModal({ name }) {
                             </div>
                             <div >
                                 <label >Weight</label>
-                                <input placeholder={"Enter Weight"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                                <input placeholder={"Enter Weight"} value={globalState.weight} type="text" onChange={(text) => setGlobalState({ ...globalState, weight: text.target.value })} />
                             </div>
                             <div >
                                 <label >Price</label>
-                                <input placeholder={"Enter Price"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                                <input placeholder={"Enter Price"} value={globalState.price} type="text" onChange={(text) => setGlobalState({ ...globalState, price: text.target.value })} />
                             </div>
-                            <select value={selectstate1} className={styles.selector} onChange={(casting) => { setselectState1(casting.target.value); setGlobalState({ ...globalState, casting: casting.target.value }) }} type="text" >
-                                <option value="">Select a casting</option>
-                                {
-                                    state1['Products']['casting']?.map(object => (
-                                        <option value={object.name} key={object.id}>{object.name}</option>
-                                    ))
-                                }
-                            </select>
+                            {
+                                state1.Products?.casting ? (
+                                <div>
+                                    <label >Select a casting</label>
+
+                                    <select value={selectstate1} className={styles.selector} onChange={(casting) => { setselectState1(casting.target.value); setGlobalState({ ...globalState, casting: casting.target.value }) }} type="text" >
+                                        <option value="">Select a casting</option>
+                                        {
+                                            state1['Products']['casting']?.map(object => (
+                                                <option value={object.name} key={object.id}>{object.name}</option>
+                                            ))
+                                        }
+                                    </select>
+
+                                </div>
+                                ) : null
+                            }
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
@@ -1002,18 +1049,18 @@ function CustomModal({ name }) {
 
             </div> */}
             <div className={styles.btnn}>
-                <Button className={styles.btn} onClick={handleOpen}>{"Create " + name}</Button>
+                {selector && (
+                    <>
+                        <select name="table_selector" value={tableSelector} className={styles.selector} onChange={(e) => { setTableSelector(e.target.value); e.target.value === "show_all" ? '' : setSelector(e.target.value) }} type="text" >
+                            <option value="show_all">Show All</option>
+                            <option value="casting">Show Castings</option>
+                            <option value="product">Show Products</option>
+                        </select>
+                    </>
+                )}
+                <Button className={styles.btn} onClick={handleOpen}>{"Create " + (name == "Products" ? "" : name)}</Button>
             </div>
 
-            {selector && (
-                <>
-                    <select name="table_selector" value={tableSelector} className={styles.selector} onChange={(e) => { setTableSelector(e.target.value); e.target.value === "show_all" ? '' : setSelector(e.target.value) }} type="text" >
-                        <option value="show_all">Show All</option>
-                        <option value="casting">Show Castings</option>
-                        <option value="product">Show Products</option>
-                    </select>
-                </>
-            )}
 
             <div>
                 <Modal

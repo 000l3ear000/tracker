@@ -5,6 +5,7 @@ import Products from './Products'
 import ProductionHall from './ProductionHall'
 import Workplace from './Workplace'
 import WorkplaceGroup from './WorkplaceGroup'
+import Operation from './Operation'
 // import Products from './Products';
 
 function Dashboard({ checked }) {
@@ -31,6 +32,15 @@ function Dashboard({ checked }) {
                 return (
                     <Products />
                 )
+            case "Operation":
+                return (
+                    <Operation />
+                )
+            case "Plans Setting":
+                return (
+                    <PlansSetting />
+                )
+
             default:
                 return (
                     <div>Hello</div>
