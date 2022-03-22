@@ -32,7 +32,7 @@ function Dashboard({ checked }) {
                 return (
                     <Products />
                 )
-            case "Operation":
+            case "Operations":
                 return (
                     <Operation />
                 )

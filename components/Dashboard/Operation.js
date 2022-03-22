@@ -6,7 +6,7 @@ function Operation() {
     return (
         <div className={styles.main}>
             <div className={styles.createBtn}>
-                {/* <CustomModal name="Plans Setting" /> */}
+                <CustomModal name="Operations" />
             </div>
         </div>
     )

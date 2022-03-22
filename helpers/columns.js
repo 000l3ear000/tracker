@@ -89,6 +89,39 @@ export const workplaceGroupColumns = [
     },
 ];
 
+export const plansSettingColumns = [
+    {
+        name: 'Id',
+        selector: row => row.id,
+        omit: true,
+    },
+    {
+        name: 'Name',
+        selector: row => row.name,
+        sortable: true,
+    },
+    {
+        name: 'Company',
+        selector: row => row.company,
+        sortable: true,
+    },
+    {
+        name: 'Production Hall',
+        selector: row => row.production_hall,
+        // sortable: true,
+    },
+    {
+        name: 'Workplace Groups',
+        selector: row => row.workplace_groups,
+        // sortable: true,
+    },
+    {
+        name: 'Description',
+        selector: row => row.description,
+        // sortable: true,
+    },
+];
+
 export const castingColumns = [
     {
         name: 'Id',
@@ -147,5 +180,23 @@ export const productColumns = [
         name: 'Casting',
         selector: row => row.casting,
         sortable:true
+    },
+];
+
+export const operationsColumns = [
+    {
+        name: 'Id',
+        selector: row => row.ID,
+        omit: true,
+    },
+    {
+        name: 'Name',
+        selector: row => row.name,
+        sortable: true,
+    },
+    {
+        name: 'Norm/Shift',
+        selector: row => row.norm_shift,
+        sortable: true,
     },
 ];
