@@ -179,7 +179,7 @@ function CustomModal({ name, checked }) {
         // console.log('i was called');
         switch (selector) {
             case "casting":
-                settableState([...castingColumns]);
+                settableState([...productColumns]);
                 return
             case "product":
                 settableState([...productColumns]);
@@ -944,7 +944,8 @@ function CustomModal({ name, checked }) {
     }
 
     const casting = () => {
-        const operationIndex = state1['Operations']?.findIndex(object => parseInt(object.id) === parseInt(editState.operation_id));
+        const operationIndex = state1['Operations']?.findIndex(object => object.ID === editState.operation_id);
+        console.log("im index", operationIndex);
         return (
             <>
                 {
@@ -1034,7 +1035,7 @@ function CustomModal({ name, checked }) {
 
     const product = () => {
         const productIndex = state1.length > 0 ? state1['Products']['casting']?.findIndex(object => object.name === editState.casting) : [];
-        const operationIndex = state1['Operations']?.findIndex(object => parseInt(object.id) === parseInt(editState.operation_id));
+        const operationIndex = state1['Operations']?.findIndex(object => parseInt(object.ID) === parseInt(editState.operation_id));
         return (
             <>
                 {
@@ -1257,9 +1258,6 @@ function CustomModal({ name, checked }) {
 
     return (
         <>
-            {/* <div className={ styles.headerDiv } >
-
-            </div> */}
             <div className={styles.btnn}>
                 {selector && (
                     <>

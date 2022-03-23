@@ -152,6 +152,22 @@ export const castingColumns = [
         name: 'Description',
         selector: row => row.description,
     },
+    {
+        name: 'Drawing_no',
+        selector: row => row.drawing_no,
+        sortable: true,
+    },
+
+    {
+        name: 'Weight',
+        selector: row => row.weight,
+        sortable:true
+    },
+    {
+        name: 'Price',
+        selector: row => row.price,
+        sortable:true
+    },
 ];
 
 export const productColumns = [
