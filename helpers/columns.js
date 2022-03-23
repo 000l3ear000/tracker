@@ -120,6 +120,16 @@ export const plansSettingColumns = [
         selector: row => row.description,
         // sortable: true,
     },
+    {
+        name: 'Start Date',
+        selector: row => row.start_date,
+        // sortable: true,
+    },
+    {
+        name: 'End Date',
+        selector: row => row.end_date,
+        // sortable: true,
+    },
 ];
 
 export const castingColumns = [
@@ -198,5 +208,10 @@ export const operationsColumns = [
         name: 'Norm/Shift',
         selector: row => row.norm_shift,
         sortable: true,
+    },
+    {
+        name: 'Description',
+        selector: row => row.description,
+        // sortable: true,
     },
 ];

@@ -13,7 +13,7 @@ import {
     productColumns,
 } from '../../helpers/columns';
 
-function CustomModal({ name }) {
+function CustomModal({ name, checked }) {
 
     const [open, setOpen] = useState(false);
     const [state, setState] = useState([]);
@@ -27,11 +27,33 @@ function CustomModal({ name }) {
     const [modalSelector, setModalSelector] = useState("casting");
     const [currentEditProduct, setCurrentEditProduct] = useState(''); 
 
-    // const [ID,setID]=useState("")
+
 
     const [editToggle, setEditToggle] = useState(false);
     const [editState, setEditState] = useState({});
     const [eventTarget, setEventTarget] = useState();
+
+    const ExpandedComponent = ({ data }) => <pre>{JSON.stringify(data, null, 2)}</pre>;
+
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    // a and b are javascript Date objects
+    function dateDiffInDays(a, b) {
+    // Discard the time and time-zone information.
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
+    // test it
+    const a = new Date("2017-01-01"),
+        b = new Date("2017-07-25"),
+        difference = dateDiffInDays(a, b);
+
+    const checkPlanSetting = (incomingData) => {
+        if ( name === "Plans Setting" ) checked(incomingData);
+    }
 
     const handleOpen = () => {
         // if (tableSelector) {
@@ -141,6 +163,7 @@ function CustomModal({ name }) {
                 return
             case "Workplace Group":
                 settableState([...workplaceGroupColumns]);
+                return
             case "Products":
                 settableState([...productColumns]);
                 return
@@ -555,6 +578,14 @@ function CustomModal({ name }) {
                                     <label>Description</label>
                                     <input name="description" placeholder={"Enter Description"} value={editState['description'] ? editState['description'] : ''} type="text" onChange={handleEditState} />
                                 </div>
+                                <div>
+                                    <label>Start Date</label>
+                                    <input name="start_date" placeholder={"Enter Start Date"} value={editState['start_date'] ? editState['start_date'] : ''} type="date" onChange={handleEditState} />
+                                </div>
+                                <div>
+                                    <label>End Date</label>
+                                    <input name="end_date" placeholder={"Enter End Date"} value={editState['end_date'] ? editState['end_date'] : ''} type="date" onChange={handleEditState} />
+                                </div>
                                 <div className={styles.btnDivs} >
                                     <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
                                     <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
@@ -604,6 +635,14 @@ function CustomModal({ name }) {
                                 <div >
                                     <label>Description</label>
                                     <input placeholder={"Enter Description"} value={globalState.description} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                                </div>
+                                <div >
+                                    <label>Start Date</label>
+                                    <input placeholder={"Enter Start Date"} value={globalState.start_date} type="date" onChange={(text) => setGlobalState({ ...globalState, start_date: text.target.value })} />
+                                </div>
+                                <div >
+                                    <label>End Date</label>
+                                    <input placeholder={"Enter End Date"} value={globalState.end_date} type="date" onChange={(text) => setGlobalState({ ...globalState, end_date: text.target.value })} />
                                 </div>
                                 <div className={styles.btnDivs} >
                                     <Button className={styles.btn} onClick={() => addEntry()} >Submit</Button>
@@ -905,6 +944,7 @@ function CustomModal({ name }) {
     }
 
     const casting = () => {
+        const operationIndex = state1['Operations']?.findIndex(object => parseInt(object.id) === parseInt(editState.operation_id));
         return (
             <>
                 {
@@ -931,7 +971,17 @@ function CustomModal({ name }) {
                                 <label>Price</label>
                                 <input name="price" placeholder={"Enter Description"} value={editState['price'] ? editState['price'] : ''} type="text" onChange={handleEditState} />
                             </div>
-
+                            <div>
+                                <label>Operations</label>
+                                <select name="operation_id" value={operationIndex ? operationIndex : ''} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value="">Select an Operation</option>
+                                    {
+                                        state1['Operations']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => updateProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
@@ -960,7 +1010,17 @@ function CustomModal({ name }) {
                                 <label >Price</label>
                                 <input placeholder={"Enter Price"} value={globalState.price} type="text" onChange={(text) => setGlobalState({ ...globalState, price: text.target.value })} />
                             </div>
-
+                            <div>
+                                <label >Operations</label>
+                                <select name="operation_id" value={globalState.operation_id} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setGlobalState({ ...globalState,  operation_id: operation.target.key }) }} type="text" >
+                                    <option value="">Select an Operation</option>
+                                    {
+                                        state1['Operations']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
@@ -974,6 +1034,7 @@ function CustomModal({ name }) {
 
     const product = () => {
         const productIndex = state1.length > 0 ? state1['Products']['casting']?.findIndex(object => object.name === editState.casting) : [];
+        const operationIndex = state1['Operations']?.findIndex(object => parseInt(object.id) === parseInt(editState.operation_id));
         return (
             <>
                 {
@@ -1015,6 +1076,17 @@ function CustomModal({ name }) {
                                         </select>
                                     </div>) : null
                             }
+                            <div>
+                                <label>Operations</label>
+                                <select name="operation_id" value={operationIndex ? operationIndex : ''} className={styles.selector} onChange={handleEditState} type="text" >
+                                    <option value="">Select an Operation</option>
+                                    {
+                                        state1['Operations']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => updateProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
@@ -1060,6 +1132,17 @@ function CustomModal({ name }) {
                                 </div>
                                 ) : null
                             }
+                            <div>
+                                <label >Operations</label>
+                                <select name="operation_id" value={globalState.operation_id} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setGlobalState({ ...globalState,  operation_id: operation.target.key }) }} type="text" >
+                                    <option value="">Select an Operation</option>
+                                    {
+                                        state1['Operations']?.map(object => (
+                                            <option value={object.name} key={object.id}>{object.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
                             <div className={styles.btnDivs} >
                                 <Button className={styles.btn} onClick={() => addProductEntry()} >Submit</Button>
                                 <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
@@ -1093,6 +1176,10 @@ function CustomModal({ name }) {
                                         <label>Norm/Shift</label>
                                         <input name="norm_shift" placeholder={"Enter Norm/Shift"} value={editState['norm_shift'] ? editState['norm_shift'] : ''} type="text" onChange={handleEditState} />
                                     </div> 
+                                    <div>
+                                        <label>Description</label>
+                                        <input name="description" placeholder={"Enter Description"} value={editState['description'] ? editState['norm_shift'] : ''} type="text" onChange={handleEditState} />
+                                    </div> 
                                     <div className={styles.btnDivs} >
                                         <Button className={styles.btn} onClick={() => updateEntry()} >Submit</Button>
                                         <Button className={styles.btnClose} onClick={() => { handleClose(); setEditToggle(false); setEventTarget('') }} >Close</Button>
@@ -1113,6 +1200,10 @@ function CustomModal({ name }) {
                                         <label>Norm/Shift</label>
                                         <input placeholder={"Enter Norm/Shift"} value={globalState.norm_shift} type="text" onChange={(text) => setGlobalState({ ...globalState, norm_shift: text.target.value })} />
                                     </div>
+                                    <div>
+                                        <label>Description</label>
+                                        <input name="description" placeholder={"Enter Description"} value={globalState['description']} type="text" onChange={(text) => setGlobalState({ ...globalState, description: text.target.value })} />
+                                    </div> 
                                     <div className={styles.btnDivs} >
                                         <Button className={styles.btn} onClick={() => addEntry()} >Submit</Button>
                                         <Button className={styles.btnClose} onClick={handleClose} >Close</Button>
@@ -1203,6 +1294,9 @@ function CustomModal({ name }) {
                         columns={columns}
                         data={data()}
                         pagination
+                        onRowClicked={(data) => checkPlanSetting(data)}
+                        expandableRows
+                        expandableRowsComponent={ExpandedComponent}
                     />
                 ) : null
             }
