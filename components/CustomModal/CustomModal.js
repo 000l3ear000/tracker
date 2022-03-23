@@ -974,7 +974,7 @@ function CustomModal({ name, checked }) {
                             </div>
                             <div>
                                 <label>Operations</label>
-                                <select name="operation_id" value={operationIndex ? operationIndex : ''} className={styles.selector} onChange={handleEditState} type="text" >
+                                <select name="operation_id" value={state3} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setEditState({ ...editState, operation_id: editState['operation_id'] ? editState['operation_id'] + ', ' + operation.target.key : operation.target.key }) }} type="text" >
                                     <option value="">Select an Operation</option>
                                     {
                                         state1['Operations']?.map(object => (
@@ -1013,7 +1013,7 @@ function CustomModal({ name, checked }) {
                             </div>
                             <div>
                                 <label >Operations</label>
-                                <select name="operation_id" value={globalState.operation_id} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setGlobalState({ ...globalState,  operation_id: operation.target.key }) }} type="text" >
+                                <select name="operation_id" value={state3} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setGlobalState({ ...globalState, operation_id: globalState['operation_id'] ? globalState['operation_id'] + ', ' + operation.target.key : operation.target.key }) }} type="text" >
                                     <option value="">Select an Operation</option>
                                     {
                                         state1['Operations']?.map(object => (
@@ -1079,7 +1079,7 @@ function CustomModal({ name, checked }) {
                             }
                             <div>
                                 <label>Operations</label>
-                                <select name="operation_id" value={operationIndex ? operationIndex : ''} className={styles.selector} onChange={handleEditState} type="text" >
+                                <select name="operation_id" value={state3} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setEditState({ ...editState, operation_id: editState['operation_id'] ? editState['operation_id'] + ', ' + operation.target.key : operation.target.key }) }} type="text" >
                                     <option value="">Select an Operation</option>
                                     {
                                         state1['Operations']?.map(object => (
@@ -1135,7 +1135,7 @@ function CustomModal({ name, checked }) {
                             }
                             <div>
                                 <label >Operations</label>
-                                <select name="operation_id" value={globalState.operation_id} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setGlobalState({ ...globalState,  operation_id: operation.target.key }) }} type="text" >
+                                <select name="operation_id" value={state3} className={styles.selector} onChange={(operation) => { setState3(operation.target.value); setGlobalState({ ...globalState, operation_id: globalState['operation_id'] ? globalState['operation_id'] + ', ' + operation.target.key : operation.target.key }) }} type="text" >
                                     <option value="">Select an Operation</option>
                                     {
                                         state1['Operations']?.map(object => (
