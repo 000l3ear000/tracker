@@ -9,7 +9,6 @@ import {
     workplaceGroupColumns,
     operationsColumns,
     plansSettingColumns,
-    castingColumns,
     productColumns,
 } from '../../helpers/columns';
 
